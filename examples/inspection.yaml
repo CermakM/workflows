@@ -7,17 +7,18 @@ metadata:
   generateName: inspection-
 spec:
   entrypoint: main
-  onExit: collect-outputs
+  # onExit: collect-outputs
 
   arguments:
     parameters:
       # Required
+      - name: batch-size
+      - name: dockerfile
       - name: inspection-id
+      - name: specification
         value: "{{workflow.name}}"
       - name: batch-name
         value: "{{workflow.parameters.inspection-id}}"
-      - name: batch-size
-      - name: specification
       - name: thoth-infra-namespace
       # Defaults
       - name: allowed-failures
@@ -38,6 +39,8 @@ spec:
     - - name: inspection-build
         arguments:
           parameters:
+          - name: dockerfile
+            value: "{{workflow.parameters.dockerfile}}"
           - name: specification
             value: "{{workflow.parameters.specification}}"
           - name: inspection-id
@@ -46,8 +49,6 @@ spec:
             value: "{{workflow.parameters.allowed-failures}}"
           - name: batch-name
             value: "{{workflow.parameters.batch-name}}"
-          - name: batch-size
-            value: "{{workflow.parameters.batch-size}}"
           - name: parallelism
             value: "{{workflow.parameters.parallelism}}"
           - name: cpu
@@ -63,28 +64,28 @@ spec:
         templateRef:
           name: inspection-build-template
           template: main
-    - - name: inspection-run
-        arguments:
-          parameters:
-          - name: batch-name
-            value: "{{workflow.parameters.batch-name}}"
-          - name: batch-size
-            value: "{{workflow.parameters.batch-size}}"
-          - name: inspection-id
-            value: "{{workflow.parameters.inspection-id}}"
-          - name: cpu
-            value: "{{workflow.parameters.cpu}}"
-          - name: memory
-            value: "{{workflow.parameters.memory}}"
-          - name: registry
-            value: "{{workflow.parameters.registry}}"
-          - name: thoth-infra-namespace
-            value: "{{workflow.parameters.thoth-infra-namespace}}"
-          - name: thoth-registry
-            value: "{{workflow.parameters.thoth-registry}}"
-        templateRef:
-          name: inspection-run-template
-          template: main
+    # - - name: inspection-run
+    #     arguments:
+    #       parameters:
+    #       - name: batch-name
+    #         value: "{{workflow.parameters.batch-name}}"
+    #       - name: batch-size
+    #         value: "{{workflow.parameters.batch-size}}"
+    #       - name: inspection-id
+    #         value: "{{workflow.parameters.inspection-id}}"
+    #       - name: cpu
+    #         value: "{{workflow.parameters.cpu}}"
+    #       - name: memory
+    #         value: "{{workflow.parameters.memory}}"
+    #       - name: registry
+    #         value: "{{workflow.parameters.registry}}"
+    #       - name: thoth-infra-namespace
+    #         value: "{{workflow.parameters.thoth-infra-namespace}}"
+    #       - name: thoth-registry
+    #         value: "{{workflow.parameters.thoth-registry}}"
+    #     templateRef:
+    #       name: inspection-run-template
+    #       template: main
 
   # exit handler
   # the outputs should always be collected and stored, even if the workflow fails
